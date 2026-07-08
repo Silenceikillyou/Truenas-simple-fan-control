@@ -1,0 +1,17 @@
+services:
+  fanctl:
+    build: .
+    container_name: fanctl
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - /sys/class/hwmon:/sys/class/hwmon:rw
+    # Writing to sysfs hwmon files from inside a container normally requires
+    # elevated privileges. Try SYS_RAWIO first; if writes still fail with
+    # "Permission denied", fall back to privileged: true below.
+    cap_add:
+      - SYS_RAWIO
+    # privileged: true
+    environment:
+      - HWMON_PATH=/sys/class/hwmon/hwmon2
